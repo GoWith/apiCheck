@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Create by maoyi on 2018/12/28
+ * Create by fireface on 2018/12/28
  * don't worry be happy!
  *
- * @author maoyi
+ * @author fireface
  */
 public class MyClassUtils {
     /**

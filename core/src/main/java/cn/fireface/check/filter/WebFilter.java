@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Create by maoyi on 2018/11/19
+ * Create by fireface on 2018/11/19
  * don't worry be happy!
- * @author maoyi
+ * @author fireface
  */
 public class WebFilter implements Filter {
     private static final String PATH_SPLITER = "/";

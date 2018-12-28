@@ -12,10 +12,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Create by maoyi on 2018/12/27
+ * Create by fireface on 2018/12/27
  * don't worry be happy!
  *
- * @author maoyi
+ * @author fireface
  * @date 2018-12-27 15:34
  */
 public class BeanMap {

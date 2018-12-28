@@ -17,10 +17,10 @@ import java.text.Collator;
 import java.util.*;
 
 /**
- * Create by maoyi on 2018/12/28
+ * Create by fireface on 2018/12/28
  * don't worry be happy!
  *
- * @author maoyi
+ * @author fireface
  * @date 2018-12-28 09:57
  */
 public class MethodFilterStrategy extends AbstractFilterStrategy {

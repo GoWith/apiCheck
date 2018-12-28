@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by maoyi on 2018/10/30.
+ * Created by fireface on 2018/10/30.
  * don't worry , be happy
  */
 public class FilterStrategyFactory {

@@ -3,7 +3,7 @@ package cn.fireface.check.web.uitls;
 import java.util.Random;
 
 /**
- * Created by maoyi on 2018/10/31.
+ * Created by fireface on 2018/10/31.
  * don't worry , be happy
  */
 public class RandomTime {

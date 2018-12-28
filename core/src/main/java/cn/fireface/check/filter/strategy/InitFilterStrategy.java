@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * Create by maoyi on 2018/12/28
+ * Create by fireface on 2018/12/28
  * don't worry be happy!
  *
- * @author maoyi
+ * @author fireface
  * @date 2018-12-28 09:57
  */
 public class InitFilterStrategy extends AbstractFilterStrategy {
