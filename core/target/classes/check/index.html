@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/jsoneditor.min.css" rel="stylesheet">
+    <style>
+        pre {
+            outline: 1px solid #ccc;
+            padding: 5px;
+            margin: 5px;
+        }
+
+        .string {
+            color: green;
+        }
+
+        .number {
+            color: darkorange;
+        }
+
+        .boolean {
+            color: blue;
+        }
+
+        .null {
+            color: magenta;
+        }
+
+        .key {
+            color: red;
+        }
+    </style>
+    <script type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
+    <link href="css/jquery.searchableSelect.css" rel="stylesheet" type="text/css">
+    <script src="js/jquery.searchableSelect.js"></script>
+    <style>
+        .spanKey {
+            width: 300px;
+        }
+
+        .inputValue {
+            display: inline-block;
+            height: 100px;
+            width: 350px;
+        }
+
+        #id_iframe {
+            margin-top: 30px;
+            width: 80%;
+            margin-left: 10%;
+            height: 450px;
+            border: 2px solid black;
+        }
+        #id_iframe body{
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+<form id="awardForm" method="post" action="/check/invoke.json" target="nm_iframe" style="position: relative;z-index: 9;">
+    <div style="width: 80%;text-align: center">
+        <div id="classInfo" style="display: inline-block; margin-right: 40px;">
+        <span style="width: 360px;">
+            <select id="beanName" name="beanName" style="width: 350px;height: 35px" onchange="getMethod()">
+                <option value="选择类" selected="selected">选择类</option>
+            </select>
+        </span>
+        </div>
+
+        <div id="methodInfo" style="display: inline-block; margin-right: 40px;">
+            <span style="width: 360px;">
+                <select name="methodName" id="methodName" style="width: 350px;height: 35px" onchange="getArgs()">
+                    <option value="选择方法" selected="selected">选择方法</option>
+
+                </select>
+            </span>
+        </div>
+        <div style="margin-right: 40px;display: inline-block;">
+            <input style="width: 60px;height: 35px" type="button" id="sub" value="提交" onclick="submitForm()">
+        </div>
+    </div>
+    <div id="argHidden" style="display: none">
+
+    </div>
+</form>
+
+
+
+<div id="argInfo" style="width: 100%;text-align: center;">
+
+</div>
+<iframe id="id_iframe" name="nm_iframe">
+
+</iframe>
+
+<script src="js/jsoneditor.min.js"></script>
+<script src="js/jsonlint.min.js"></script>
+
+<script>
+
+    //初始化编辑器模式
+    var codeOptions = {
+        mode: 'code',
+        modes: ['code'],
+        onError: function (err) {
+            alert(err.toString());
+        }
+    };
+
+    var editor = [];
+
+    function submitForm() {
+        $("#argHidden").empty()
+        editor.forEach(function (value) {
+            var ids = value.name.replace(" ", "_");
+            $("#argHidden").append('<div style="margin: 20px">' +
+                '<span class="spanKey">' + value.name + '</span>' +
+                '<span>' +
+                '<textarea class="inputValue" id="_' + ids + '" name="' + value.name + '" value="" type="text" />' +
+                '</span> ' +
+                '</div>'
+            );
+            $("#_" + ids).val(value.iEditor.getText())
+        })
+        $("#awardForm").submit()
+    }
+
+    $(function () {
+        var url = "/check/init.json";
+        var param = {}
+        jQuery.post(url, param, function (data) {
+            $("#beanName").empty().append('<option value="选择服务" selected="selected">选择服务</option>');
+
+            data.Content.forEach(function (item) {
+                $("#beanName").append("<option value='" + item + "'>" + item + "</option>");
+            })
+            $('#beanName').searchableSelect({
+                afterSelectItem: getMethod
+            });
+        }, "json");
+    })
+    function getMethod() {
+        var beanName = $("#beanName").val();
+        if (beanName ==="选择服务"){
+            return "";
+        }
+        var url = "/check/method.json";
+        var param = {
+            "beanName": beanName
+        }
+        jQuery.post(url, param, function (data) {
+            var selectE =
+                '<span style="width: 360px;">' +
+                '<select name="methodName" id="methodName" style="width: 350px;height: 25px" onchange="getArgs()"> ' +
+                '<option value="选择方法" selected="selected">选择方法</option>' +
+                '</select>' +
+                '</span>'
+            $("#methodInfo").empty().append(selectE);
+            data.Content.forEach(function (item) {
+                $("#methodName").append("<option value='" + item + "'>" + item + "</option>");
+            })
+            $('#methodName').searchableSelect({
+                afterSelectItem: getArgs
+            });
+        }, "json");
+        $("#argInfo").empty();
+        $(parent.frames["nm_iframe"].document).find("#result").empty();
+    }
+
+    function getArgs() {
+        var beanName = $("#beanName").val();
+        var methodName = $("#methodName").val();
+        if (methodName ==="选择方法"){
+            return "";
+        }
+        var url = "/check/arg.json";
+        var param = {
+            "beanName": beanName,
+            "methodName": methodName
+        }
+        jQuery.post(url, param, function (data) {
+
+
+            $("#argInfo").empty()
+            editor = []
+            data.Content.forEach(function (item) {
+                var ids = item.key.replace(" ", "_");
+                // $("#argInfo").append('<div style="margin: 20px">' +
+                //     '<span class="spanKey">'+item.key+'</span>' +
+                //     '<span>' +
+                //         '<textarea class="inputValue" id="'+ids+'" name="'+item.key+'" value="" type="text" />' +
+                //     '</span> ' +
+                //     '</div>'
+                // );
+                $("#argInfo").append('' +
+                    '<div style="display: inline-block;width: 400px;margin: 20px">' +
+                    '<div style="width: 100%;text-align: center">' +
+                    '<span class="spanKey">' + item.key + '</span>' +
+                    '</div>' +
+                    '<div id="' + ids + '" style="width: 100%; height: 300px;margin-top: 10px">' +
+                    '</div>' +
+                    '</div>'
+                );
+                var arg = document.getElementById(ids)
+                var codeEditor = new JSONEditor(arg, codeOptions, JSON.parse(item.value));
+                editor.push({name: item.key, iEditor: codeEditor})
+                // $("#"+ids).val(item.value)
+            })
+        }, "json");
+//        $(parent.frames["nm_iframe"].document).find("#result").empty();
+    }
+    $('#id_iframe').load(function () {
+        var text = $(this).contents().find("body").text();
+        // 根据后台返回值处理结果
+        var json = JSON.parse(text);
+//        $(this).contents().find("body").text(json.Content)
+
+        var text = $(this).contents().find("head").html('<style>' +
+            'pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }' +
+            '.string { color: green; }' +
+            '.number { color: darkorange; }' +
+            '.boolean { color: blue; }' +
+            '.null { color: magenta; }' +
+            '.key { color: red; }' +
+            '</style>');
+        if (typeof json.Content != "undefined") {
+            $(this).contents().find("body").html('<div style="width: 100%;text-align: center">执行结果</div></div><pre id="result">' + syntaxHighlight(json.Content) + '</pre>')
+        }
+
+    });
+
+
+    function syntaxHighlight(json) {
+        if (typeof json != 'string') {
+            json = JSON.stringify(json, undefined, 2);
+        }
+        json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+</script>
+
+</body>
+</html>
