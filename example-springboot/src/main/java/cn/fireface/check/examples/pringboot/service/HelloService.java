@@ -34,4 +34,7 @@ public class HelloService {
 //        helloManager.sayBye();
         System.out.println("hello service  say : bye");
     }
+    public String getString(String s){
+        return s;
+    }
 }

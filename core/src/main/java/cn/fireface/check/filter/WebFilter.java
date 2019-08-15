@@ -1,5 +1,6 @@
 package cn.fireface.check.filter;
 
+import cn.fireface.check.LocalHost;
 import cn.fireface.check.Utils;
 import cn.fireface.check.beans.BeanMap;
 import cn.fireface.check.filter.strategy.FilterStrategy;
@@ -14,6 +15,7 @@ import java.util.Map;
 /**
  * Create by fireface on 2018/11/19
  * don't worry be happy!
+ *
  * @author fireface
  */
 public class WebFilter implements Filter {
@@ -27,13 +29,25 @@ public class WebFilter implements Filter {
     private static final String SVG_TAIL = ".svg";
     private static final String RESOURCE_PATH = "/check";
 
+    private static boolean acceptd = true;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        String ips = System.getProperty("api.check.pass.ip");
+        acceptd = ips == null || (LocalHost.getMachineName() != null && ips.replace(".", "-").contains(LocalHost.getMachineName()));
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+
+        if (!acceptd) {
+            return;
+        }
+
+        String encoding = "UTF-8";
+        servletRequest.setCharacterEncoding(encoding);
+        servletResponse.setCharacterEncoding(encoding);
+
         BeanMap.load(servletRequest.getServletContext());
         HttpServletRequest request = null;
         HttpServletResponse response = null;
@@ -71,7 +85,7 @@ public class WebFilter implements Filter {
     private void returnResourceFile(String fileName, String uri, HttpServletResponse response) throws IOException {
 
 //        String filePath = getFilePath(uri);
-        String filePath =uri;
+        String filePath = uri;
 
         if (filePath.endsWith(HTML_TAIL)) {
             response.setContentType("text/html; charset=utf-8");

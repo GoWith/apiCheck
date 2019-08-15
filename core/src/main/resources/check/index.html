@@ -225,7 +225,7 @@
             '.key { color: red; }' +
             '</style>');
         if (typeof json.Content != "undefined") {
-            $(this).contents().find("body").html('<div style="width: 100%;text-align: center">执行结果</div></div><pre id="result">' + syntaxHighlight(json.Content) + '</pre>')
+            $(this).contents().find("body").html('<div style="width: 100%;text-align: center">执行结果</div></div><pre id="result">' + syntaxHighlight(json) + '</pre>')
         }
 
     });
