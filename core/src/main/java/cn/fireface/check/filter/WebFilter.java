@@ -6,6 +6,7 @@ import cn.fireface.check.beans.BeanMap;
 import cn.fireface.check.filter.strategy.FilterStrategy;
 import cn.fireface.check.filter.strategy.factory.FilterStrategyFactory;
 import com.alibaba.fastjson.JSON;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +45,8 @@ public class WebFilter implements Filter {
                 System.out.println(JSON.toJSONString(prop));
                 String ips = prop.getProperty("api.check.pass.ip");
                 System.out.println(ips);
-                System.out.println(LocalHost.getMachineName());
-                accept = ips == null || (LocalHost.getMachineName() != null && ips.contains(LocalHost.getMachineName()));
+                System.out.println(LocalHost.getHostAddress());
+                accept = ips == null || (!StringUtils.isEmpty(LocalHost.getHostAddress()) && ips.contains(LocalHost.getHostAddress()));
             }else {
                 accept = true;
             }
