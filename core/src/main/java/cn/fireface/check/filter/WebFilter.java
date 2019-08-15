@@ -5,12 +5,15 @@ import cn.fireface.check.Utils;
 import cn.fireface.check.beans.BeanMap;
 import cn.fireface.check.filter.strategy.FilterStrategy;
 import cn.fireface.check.filter.strategy.factory.FilterStrategyFactory;
+import com.alibaba.fastjson.JSON;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Create by fireface on 2018/11/19
@@ -29,18 +32,33 @@ public class WebFilter implements Filter {
     private static final String SVG_TAIL = ".svg";
     private static final String RESOURCE_PATH = "/check";
 
-    private static boolean acceptd = true;
+    private static boolean accept = true;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        String ips = System.getProperty("api.check.pass.ip");
-        acceptd = ips == null || (LocalHost.getMachineName() != null && ips.replace(".", "-").contains(LocalHost.getMachineName()));
+        try {
+            InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("WEB-INF/api/check/config.properties");
+            if (resourceAsStream!=null) {
+                Properties prop = new Properties();
+                prop.load(resourceAsStream);
+                System.out.println(JSON.toJSONString(prop));
+                String ips = prop.getProperty("api.check.pass.ip");
+                System.out.println(ips);
+                System.out.println(LocalHost.getMachineName());
+                accept = ips == null || (LocalHost.getMachineName() != null && ips.replace(".", "-").contains(LocalHost.getMachineName()));
+            }else {
+                accept = true;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        if (!acceptd) {
+        if (!accept) {
             return;
         }
 
