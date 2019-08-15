@@ -45,7 +45,7 @@ public class WebFilter implements Filter {
                 String ips = prop.getProperty("api.check.pass.ip");
                 System.out.println(ips);
                 System.out.println(LocalHost.getMachineName());
-                accept = ips == null || (LocalHost.getMachineName() != null && ips.replace(".", "-").contains(LocalHost.getMachineName()));
+                accept = ips == null || (LocalHost.getMachineName() != null && ips.contains(LocalHost.getMachineName()));
             }else {
                 accept = true;
             }
