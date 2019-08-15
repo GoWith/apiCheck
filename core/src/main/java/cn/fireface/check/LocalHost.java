@@ -60,4 +60,18 @@ public class LocalHost {
     public static String getMachineName() {
         return hostName;
     }
+
+    public static String getHostAddress (){
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public static void main(String[] args) {
+        String machineName = getMachineName();
+        System.out.println(machineName);
+    }
 }
